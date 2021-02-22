@@ -21,11 +21,11 @@ function App() {
   //if it's true the the amount we have in the state is from the fromAmount
   if (amountInFromCurrency) {
     fromAmount = amount;
-    toAmount = amount * exchangeRate;
+    toAmount = amount * exchangeRate || 0;
     //else it is from the toAmount
   } else {
     toAmount = amount;
-    fromAmount = amount / exchangeRate;
+    fromAmount = amount / exchangeRate || 0;
   }
 
   useEffect(() => {
@@ -48,9 +48,10 @@ function App() {
   //call this function when the currencies changes
   useEffect(() => {
     if (fromCurrency != null && toCurrency != null) {
-      fetch(`${BASE_URL}`).then((res) =>
-        res.json().then((data) => setExchangeRate(data.rates[toCurrency]))
-      );
+      fetch(`${BASE_URL}`).then((
+        res //?base=${fromCurrency}&symbols=$
+        //https://data.fixer.io/api/latest?access_key=3b4c8203789e6790d094394a8c57c55f&base=${fromCurrency}&symbols=${toCurrency}
+      ) => res.json().then((data) => setExchangeRate(data.rates[toCurrency])));
     }
   }, [fromCurrency, toCurrency]);
 
@@ -69,11 +70,12 @@ function App() {
   }
 
   return (
-    <>
+    <div>
       <div className="container-1">
         <h1>Currency Converter</h1>
         <ConverterRow
           //pass the currency option as a prop
+          //to be able to populate them in
           currencyOption={currencyOption}
           selectedCurrency={fromCurrency}
           onChangeCurrency={(e) => setFromCurrency(e.target.value)}
@@ -96,7 +98,7 @@ function App() {
         <h1>Choose and Learn more about the Countries</h1>
         <SearchCountry />
       </div>
-    </>
+    </div>
   );
 }
 export default App;
